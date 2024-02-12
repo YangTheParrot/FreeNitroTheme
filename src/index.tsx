@@ -13,9 +13,9 @@ const UserSettings = getByProps("setShouldSyncAppearanceSettings")
 const PermStat = getByProps("canUseClientThemes", {defaultExport: false});
 
 
-const Patcher = create('ClientThemes')
+const Patcher = create('FreeNitroThemes')
 
-const ClientThemes: Plugin = {
+const FreeNitroThemes: Plugin = {
     ...manifest,
     onStart() {
         // disable theme sync (does not work - 4044)
@@ -57,4 +57,4 @@ const ClientThemes: Plugin = {
         Patcher.unpatchAll()
     }
 }
-registerPlugin(ClientThemes)
+registerPlugin(FreeNitroThemes)
