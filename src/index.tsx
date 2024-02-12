@@ -18,13 +18,13 @@ const Patcher = create('ClientThemes')
 const ClientThemes: Plugin = {
     ...manifest,
     onStart() {
-        // disable theme sync
+        // disable theme sync (does not work - 4044)
         UserSettings.setShouldSyncAppearanceSettings(false)
-        Patcher.before(UserSettings, "setShouldSyncAppearanceSettings", (self, args, res) => {
-            args[0] = false
-        })
+        // Patcher.before(UserSettings, "setShouldSyncAppearanceSettings", (self, args, res) => {
+        //     args[0] = false
+        // })
 
-        // make client theme available
+        // make client theme available (rosie's snippet doesnt work consistently - 4044)
         // Patcher.instead(EnableClientThemes, 'canUseClientThemes', () => true)
 
         if (Object.isFrozen(PermStat.default)) {
@@ -37,6 +37,7 @@ const ClientThemes: Plugin = {
 
         // detect theme selection
         Patcher.after(Themer, "updateMobilePendingThemeIndex", (_, args, __) => {
+            UserSettings.setShouldSyncAppearanceSettings(false) // disable theme sync after theme change since it fails to deactivate on load - 4044
             // it uses mobileThemesIndex, which is different from presetId
             if (0 <= args[0] && args[0] <= 2) { // non nitro client theme
                 set(plugin_name, "theme", -1)  // at this time, update background gradient preset won't be called. so I need to reset the value I store manually
