@@ -8,7 +8,6 @@ import {set} from "enmity/api/settings"
 // Make sure to disable "sync across clients"
 
 const Themer = getByProps("updateBackgroundGradientPreset")
-const PermStat = getByProps("canUseClientThemes", {defaultExport: false});
 const UserSettings = getByProps("setShouldSyncAppearanceSettings")
 const Can = getByProps('canUseClientThemes');
 
@@ -24,9 +23,6 @@ const ClientThemes: Plugin = {
             args[0] = false
         })
 
-        if (Object.isFrozen(PermStat.default)) {
-            PermStat.default = {...PermStat.default}
-        }
         // make client theme available
         Patcher.instead(Can, 'canUseClientThemes', () => true);
 
