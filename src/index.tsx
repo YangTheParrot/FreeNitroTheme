@@ -9,7 +9,8 @@ import {get, set} from "enmity/api/settings"
 
 const Themer = getByProps("updateBackgroundGradientPreset")
 const UserSettings = getByProps("setShouldSyncAppearanceSettings")
-const EnableClientThemes = getByProps('canUseClientThemes');
+// const EnableClientThemes = getByProps('canUseClientThemes');
+const PermStat = getByProps("canUseClientThemes", {defaultExport: false});
 
 
 const Patcher = create('ClientThemes')
@@ -23,14 +24,16 @@ const ClientThemes: Plugin = {
             args[0] = false
         })
 
-        // apply theme on startup before Discord applies it. we can't wait  Discord to load it
-        if (get(plugin_name, "theme", -1) > 0) {
-            Themer.updateBackgroundGradientPreset(get(plugin_name, "theme", -1))
-        }
-
         // make client theme available
-        Patcher.instead(EnableClientThemes, 'canUseClientThemes', () => true)
+        // Patcher.instead(EnableClientThemes, 'canUseClientThemes', () => true)
 
+        if (Object.isFrozen(PermStat.default)) {
+            PermStat.default = {...PermStat.default}
+        }
+        // make client theme available
+        Patcher.instead(PermStat.default, "canUseClientThemes", (_, args, __) => {
+            return true
+        })
 
         // detect theme selection
         Patcher.after(Themer, "updateMobilePendingThemeIndex", (_, args, __) => {
