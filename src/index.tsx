@@ -9,8 +9,8 @@ import {set} from "enmity/api/settings"
 
 const Themer = getByProps("updateBackgroundGradientPreset")
 const PermStat = getByProps("canUseClientThemes", {defaultExport: false});
-const {ExperimentStore} = getByProps('useAndTrackExposureToUserExperiment')
 const UserSettings = getByProps("setShouldSyncAppearanceSettings")
+const Can = getByProps('canUseClientThemes');
 
 
 const Patcher = create('ClientThemes')
@@ -24,28 +24,11 @@ const ClientThemes: Plugin = {
             args[0] = false
         })
 
-        // enable client theme experiment
-        Patcher.instead("canUseClientThemes", PermStat, () => true)
-        Patcher.after(ExperimentStore, 'getUserExperimentDescriptor', (self, [expName], res) => {
-            if (expName === "2023-02_client_themes_mobile" && res?.bucket) {
-                return {
-                    type: 'user',
-                    revision: 1,
-                    population: 0,
-                    bucket: 1,
-                    override: true
-                }
-            }
-        })
-
-
         if (Object.isFrozen(PermStat.default)) {
             PermStat.default = {...PermStat.default}
         }
         // make client theme available
-        Patcher.instead(PermStat.default, "canUseClientThemes", (_, args, __) => {
-            return true
-        })
+        Patcher.instead(Can, 'canUseClientThemes', () => true);
 
 
         // detect theme selection
