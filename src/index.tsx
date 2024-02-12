@@ -3,13 +3,13 @@ import {create} from 'enmity/patcher'
 // @ts-ignore
 import manifest, {name as plugin_name} from '../manifest.json'
 import {getByProps} from "enmity/modules"
-import {set} from "enmity/api/settings"
+import {get, set} from "enmity/api/settings"
 
 // Make sure to disable "sync across clients"
 
 const Themer = getByProps("updateBackgroundGradientPreset")
 const UserSettings = getByProps("setShouldSyncAppearanceSettings")
-const Can = getByProps('canUseClientThemes');
+const EnableClientThemes = getByProps('canUseClientThemes');
 
 
 const Patcher = create('ClientThemes')
@@ -23,8 +23,13 @@ const ClientThemes: Plugin = {
             args[0] = false
         })
 
+        // apply theme on startup before Discord applies it. we can't wait  Discord to load it
+        if (get(plugin_name, "theme", -1) > 0) {
+            Themer.updateBackgroundGradientPreset(get(plugin_name, "theme", -1))
+        }
+
         // make client theme available
-        Patcher.instead(Can, 'canUseClientThemes', () => true);
+        Patcher.instead(EnableClientThemes, 'canUseClientThemes', () => true)
 
 
         // detect theme selection
