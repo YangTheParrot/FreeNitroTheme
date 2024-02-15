@@ -9,23 +9,14 @@ import {get, set} from "enmity/api/settings"
 
 const Themer = getByProps("updateBackgroundGradientPreset")
 const UserSettings = getByProps("setShouldSyncAppearanceSettings")
-// const EnableClientThemes = getByProps('canUseClientThemes');
 const PermStat = getByProps("canUseClientThemes", {defaultExport: false});
 
 
-const Patcher = create('FreeNitroThemes')
+const Patcher = create('FreeNitroTheme')
 
-const FreeNitroThemes: Plugin = {
+const FreeNitroTheme: Plugin = {
     ...manifest,
     onStart() {
-        // disable theme sync (does not work - 4044)
-        UserSettings.setShouldSyncAppearanceSettings(false)
-        // Patcher.before(UserSettings, "setShouldSyncAppearanceSettings", (self, args, res) => {
-        //     args[0] = false
-        // })
-
-        // make client theme available (rosie's snippet doesnt work consistently - 4044)
-        // Patcher.instead(EnableClientThemes, 'canUseClientThemes', () => true)
 
         if (Object.isFrozen(PermStat.default)) {
             PermStat.default = {...PermStat.default}
@@ -57,4 +48,4 @@ const FreeNitroThemes: Plugin = {
         Patcher.unpatchAll()
     }
 }
-registerPlugin(FreeNitroThemes)
+registerPlugin(FreeNitroTheme)
