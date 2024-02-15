@@ -2,6 +2,7 @@ import {Plugin, registerPlugin} from 'enmity/managers/plugins'
 import {create} from 'enmity/patcher'
 // @ts-ignore
 import manifest, {name as plugin_name} from '../manifest.json'
+import Settings from "./components/Settings"
 import {getByProps} from "enmity/modules"
 import {get, set} from "enmity/api/settings"
 
@@ -46,6 +47,9 @@ const FreeNitroTheme: Plugin = {
     },
     onStop() {
         Patcher.unpatchAll()
+    },
+    getSettingsPanel({settings}) {
+        return <Settings settings={settings}/>
     }
 }
 registerPlugin(FreeNitroTheme)
